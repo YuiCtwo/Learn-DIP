@@ -25,6 +25,41 @@ def wiener(inp, PSF, K=0.01):
     return result
 
 
+# 该函数在 matlab 中可以直接使用等于将中心元素移动到左上角再做 fft2
+# [ 0 -1 0       [ 4 -1 -1
+#  -1 4 -1    ->  -1  0  0  -> fft2(x)
+#   0 -1 0]       -1  0  0 ]
+def psf2otf(psf, outSize):
+    psfSize = np.array(psf.shape)
+    outSize = np.array(outSize)
+    padSize = outSize - psfSize
+    psf = np.pad(psf, ((0, padSize[0]), (0, padSize[1])), 'constant')
+    for i in range(len(psfSize)):
+        psf = np.roll(psf, -int(psfSize[i] / 2), i)
+    otf = np.fft.fftn(psf)
+    nElem = np.prod(psfSize)
+    nOps = 0
+    for k in range(len(psfSize)):
+        nffts = nElem / psfSize[k]
+        nOps = nOps + psfSize[k] * np.log2(psfSize[k]) * nffts
+    if np.max(np.abs(np.imag(otf))) / np.max(np.abs(otf)) <= nOps * np.finfo(np.float32).eps:
+        otf = np.real(otf)
+    return otf
+
+
 # 约束最小二乘方滤波 Constrained Least Squares Filtering
-def constrained_least_sq():
-    pass
+# 博客讲解:
+def constrained_least_sq(inp, PSF, gamma=0.05):
+    kernel = np.array([[0, -1, 0],
+                       [-1, 4, -1],
+                       [0, -1, 0]])
+    PSF_kernel = np.fft.fft2(kernel)
+    inp_fft = np.fft.fft2(inp)
+    PF = np.fft.fft2(PSF)
+    numerator = np.conj(PF)
+    denominator = PF ** 2 + gamma * (PSF_kernel ** 2)
+    result = np.fft.ifft2(numerator * inp_fft / denominator)
+    result = np.abs(np.fft.fftshift(result))
+    return result
+
+
