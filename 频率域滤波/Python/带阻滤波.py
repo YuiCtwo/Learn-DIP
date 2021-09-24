@@ -6,7 +6,7 @@ from Filter import BBRFFilter, GBRFFilter, IBRFFilter
 
 if __name__ == '__main__':
     # 仅供测试使用
-    choice = "material/windmill_noise.png"
+    choice = "windmill_noise.png"
     img = Image.open(choice).convert("L")
 
     # sq = min(img.size[0], img.size[1])

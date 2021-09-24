@@ -97,7 +97,7 @@ class BLPFFilter(Filter):
 class BTWNotchFilter:
 
     @classmethod
-    def generate_filter(cls, shape, n, d0: List[float], center_points: List[Tuple[(int, int)]]):
+    def generate_filter(cls, shape, n, d0: List[float], center_points: List[Tuple[int, int]]):
         num_notch = len(center_points)
         assert len(d0) == num_notch
         mid_M = shape[0] / 2
