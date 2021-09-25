@@ -48,7 +48,6 @@ def psf2otf(psf, outSize):
 
 
 # 约束最小二乘方滤波 Constrained Least Squares Filtering
-# 博客讲解:
 def constrained_least_sq(inp, PSF, gamma=0.05):
     kernel = np.array([[0, -1, 0],
                        [-1, 4, -1],
