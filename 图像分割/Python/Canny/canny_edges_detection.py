@@ -248,21 +248,18 @@ def link_edges(strong_edges, weak_edges):
     H, W = strong_edges.shape
     indices = list(np.stack(np.nonzero(strong_edges)).T)
     t = 0
-    visit = np.zeros((H, W))
+    visit_weak_edges = np.copy(weak_edges)
     edges = np.copy(strong_edges)
     while len(indices) != 0:
         t += 1
         p = indices.pop()
         ph = p[0]
         pw = p[1]
-        if visit[ph, pw] == 1:
-            continue
-        else:
-            visit[ph, pw] = 1
         neighbors = get_neighbors(ph, pw, H, W)
         for pp in neighbors:
-            if weak_edges[pp[0], pp[1]] == 1:
+            if visit_weak_edges[pp[0], pp[1]] == 1:
                 # 强边界和弱边界相连，该弱边界也为最终的确定边界
+                visit_weak_edges[pp[0], pp[1]] = 0
                 edges[pp[0], pp[1]] = 1
                 indices.append([pp[0], pp[1]])
         if t % 1000 == 0:
