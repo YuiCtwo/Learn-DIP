@@ -1,4 +1,6 @@
 import numpy as np
+
+
 def hough_transform(img):
     """ Transform points in the input image into Hough space.
 
@@ -24,16 +26,25 @@ def hough_transform(img):
     cos_t = np.cos(thetas)
     sin_t = np.sin(thetas)
     num_thetas = len(thetas)
-
+    num_rhos = len(rhos)
     # Initialize accumulator in the Hough space
     accumulator = np.zeros((2 * diag_len + 1, num_thetas), dtype=np.uint64)
     ys, xs = np.nonzero(img)
 
     # Transform each point (x, y) in image
     # Find rho corresponding to values in thetas
-    # and increment the accumulator in the corresponding coordiate.
-    ### YOUR CODE HERE
-    pass
-    ### END YOUR CODE
+    # and increment the accumulator in the corresponding coordiates.
+    for x in xs:
+        for y in ys:
+            for i in range(num_thetas):
+                rho = x * cos_t[i] + y * sin_t[i]
+                # 四舍五入已经是求近似的值了
+                rho_int = int(rho)
+                idx = rho_int - (-diag_len)
+                # 确保不小于 0
+                idx = max(idx, 0)
+                # 确保不越界
+                idx = min(idx, num_rhos-1)
+                accumulator[idx, i] += 1
 
     return accumulator, rhos, thetas
