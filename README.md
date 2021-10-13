@@ -38,3 +38,4 @@
 C++ 的代码整理了出来，姑且先放在这里一些，具体[C++ 环境](./env_CXX.md)
 
 - [GMM](CXX/GMM/CXX)
+- [LSD](CXX/LSD)
