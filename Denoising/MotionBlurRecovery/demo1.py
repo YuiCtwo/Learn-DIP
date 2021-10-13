@@ -45,7 +45,7 @@ def normal(arr):
 
 
 if __name__ == '__main__':
-    img = cv.imread("./tower.jpg")
+    img = cv.imread("tower.jpg")
     inverse_result = []
     wiener_result = []
     blurred_result = []

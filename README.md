@@ -8,23 +8,33 @@
 
 ## 构成
 
-按照一个模块一个文件夹来，一个算法一个文件，整体会用 C++ 和 Python 来实现，具体代码运行的环境参考另外两个文件：
+尽可能按照一个模块一个文件夹来，整体会用 Python 来实现，具体代码运行的环境参考文件：
 - [Python 环境](./env_Python.md)
-- [C++ 环境](./env_CXX.md)
 
-~~不分两个仓库是因为这样会显得都很少~~
 
-会以 Python 为核心，先尽量增加内容，再补充 C++ 的实现。
+## 主要部分
 
-## 算法
+- 频率域滤波
+  - [带阻/带通滤波](FrequencyDomainFilter/band-stop.py)
+  - [陷波滤波](FrequencyDomainFilter/notch.py)
+- 图像去噪
+  - [去除椒盐噪声(自适应中值法)](Denoising/AdaptMedianFilter)
+  - [运动模糊恢复(维纳滤波&约束最小二乘方滤波)](Denoising/MotionBlurRecovery)
+- 形态学
+  - [骨架提取](Morphology/Skeleton)
+- 图像分割
+  - 点线和边缘检测检测
+    - [线检测(霍夫变换)](ImageSegmentation/LowLevelDetector/Hough)
+    - [Canny](ImageSegmentation/LowLevelDetector/Canny)  
+  - 图割法分割
+  - 聚类法分割
+    - K-Means
+    - 超像素法
+- 图像调整
+  - Seam-Carving
+  
+## 额外部分
 
-|algorithm|C++|Python|demo|
-|--|--|--|--|
-|GMM|√||√|
-|频率域滤波||√|√|
-|图像去噪：自适应中值法||√|√|
-|图像复原与重建：维纳滤波||√|√|
-|图像复原与重建：约束最小二乘方滤波||√|√|
-|形态学：骨架||√|√|
-|图像分割：霍夫变换||√|√|
-|图像分割：Canny||√|√|
+C++ 的代码整理了出来，姑且先放在这里一些，具体[C++ 环境](./env_CXX.md)
+
+- GMM
