@@ -23,9 +23,12 @@
 - 形态学
   - [骨架提取](Morphology/Skeleton)
 - 图像分割
-  - 点线和边缘检测检测
+  - 点线和边缘检测
     - [线检测(霍夫变换)](ImageSegmentation/LowLevelDetector/Hough)
-    - [Canny](ImageSegmentation/LowLevelDetector/Canny)  
+    - [Canny](ImageSegmentation/LowLevelDetector/Canny)
+    - [Harris 角点检测](ImageSegmentation/FeatureDescriptors/HOG/harris.py)
+  - 特征描述子
+    - [HOG](ImageSegmentation/FeatureDescriptors/HOG)
   - 图割法分割
   - 聚类法分割
     - K-Means
