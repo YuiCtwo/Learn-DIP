@@ -4,12 +4,9 @@ import matplotlib.pyplot as plt
 from skimage import filters
 from skimage.io import imread
 from skimage.feature import corner_peaks
-from skimage.util.shape import view_as_blocks
 from scipy.spatial.distance import cdist
-
 from scipy.ndimage.filters import convolve
-
-from utils import pad, unpad, get_output_space, warp_image
+from utils import plot_matches
 
 
 def harris_corners(img, window_size=3, k=0.04):
@@ -89,7 +86,7 @@ def simple_descriptor(patch):
         feature: 1D array of shape (H * W)
     """
     H, W = patch.shape
-    feature = np.resize(patch, (H*W, 1))
+    feature = np.resize(patch, (H * W, 1))
 
     mu = np.mean(feature)
     sigma = np.std(feature)
@@ -117,11 +114,11 @@ def describe_keypoints(image, keypoints, desc_func, patch_size=16):
 
     for i, kp in enumerate(keypoints):
         y, x = kp
-        patch = image[y-(patch_size//2):y+((patch_size+1)//2),
-                      x-(patch_size//2):x+((patch_size+1)//2)]
+        patch = image[y - (patch_size // 2):y + ((patch_size + 1) // 2),
+                x - (patch_size // 2):x + ((patch_size + 1) // 2)]
         desc.append(desc_func(patch))
-    res = np.array(desc)
-    res = res.reshape((res.shape[0], res.shape[1]))
+    # h, w = len(desc), len(desc[0])
+    res = np.asarray(desc)
     return res
 
 
@@ -146,7 +143,21 @@ def match_descriptors(desc1, desc2, threshold=0.5):
         of matching descriptors
     """
     match = []
+
     M = desc1.shape[0]
+    # there has some bugs with the array's shape
+    # if len(desc1.shape) == 3:
+    #     new_des1 = desc1.reshape((desc1.shape[0], desc1.shape[1]))
+    # elif len(desc1.shape) == 1:
+    #     new_des1 = desc1.reshape((desc1.shape[0], 1))
+    # else:
+    #     new_des1 = desc1
+    # if len(desc2.shape) == 3:
+    #     new_des2 = desc2.reshape((desc2.shape[0], desc2.shape[1]))
+    # elif len(desc2.shape) == 1:
+    #     new_des2 = desc2.reshape((desc2.shape[0], 1))
+    # else:
+    #     new_des2 = desc2
     # result array MxN, each one show the distance
     dists = cdist(desc1, desc2)
     sort_dists = np.argsort(dists)
@@ -161,20 +172,28 @@ def match_descriptors(desc1, desc2, threshold=0.5):
 
 
 if __name__ == '__main__':
-    img = imread('sudoku.png', as_gray=True)
+    img1 = imread('uttower1.jpg', as_gray=True)
+    img2 = imread('uttower2.jpg', as_gray=True)
 
-    # Compute Harris corner response
-    response = harris_corners(img)
-    # Apply non-maximum suppression in response map
-    corners = corner_peaks(response, threshold_rel=0.01)
-    plt.rcParams['figure.figsize'] = (15.0, 12.0)  # set default size of plots
-    plt.rcParams['image.interpolation'] = 'nearest'
-    plt.rcParams['image.cmap'] = 'gray'
-
-    # Display detected corners
-    plt.imshow(img)
-    plt.scatter(corners[:, 1], corners[:, 0], marker='x')
-    plt.axis('off')
-    plt.title('Detected Corners')
+    # Detect keypoints in two images
+    keypoints1 = corner_peaks(harris_corners(img1, window_size=3),
+                              threshold_rel=0.05,
+                              exclude_border=8)
+    keypoints2 = corner_peaks(harris_corners(img2, window_size=3),
+                              threshold_rel=0.05,
+                              exclude_border=8)
+    np.random.seed(131)
+    patch_size = 5
+    # use simple descriptor to test harris corner detector
+    desc1 = describe_keypoints(img1, keypoints1,
+                               desc_func=simple_descriptor,
+                               patch_size=patch_size)
+    desc2 = describe_keypoints(img2, keypoints2,
+                               desc_func=simple_descriptor,
+                               patch_size=patch_size)
+    matches = match_descriptors(desc1, desc2, 0.7)
+    fig, ax = plt.subplots(1, 1, figsize=(15, 12))
+    ax.axis('off')
+    plt.title('Matched Simple Descriptor')
+    plot_matches(ax, img1, img2, keypoints1, keypoints2, matches)
     plt.show()
-
