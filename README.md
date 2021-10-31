@@ -31,7 +31,8 @@
     - [HOG](ImageSegmentation/FeatureDescriptors/HOG)
   - 图割法分割
   - 聚类法分割
-    - K-Means
+    - [K-Means](ImageSegmentation/Clustering/K-Means/segmentation.py)
+    - [像素特征(基于像素点的图片分割)](ImageSegmentation/Clustering/Pixel-Features)
     - 超像素法
 - 图像调整
   - Seam-Carving

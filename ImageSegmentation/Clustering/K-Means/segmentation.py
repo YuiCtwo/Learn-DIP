@@ -1,5 +1,9 @@
 import numpy as np
 from scipy.spatial.distance import squareform, pdist, cdist
+from time import time
+import matplotlib.pyplot as plt
+from matplotlib import rc
+from skimage import io
 
 
 # Clustering Methods
@@ -60,9 +64,6 @@ def kmeans(features, k, num_iters=100):
                 center_sum[kk] = 0
                 center_num[kk] = 0
 
-
-
-
     return assignments
 
 
@@ -97,7 +98,7 @@ def kmeans_fast(features, k, num_iters=100):
 
     for n in range(num_iters):
         dis = cdist(centers, features)
-        assign_idx = np.argmin(dis, axis=1)
+        assign_idx = np.argmin(dis, axis=0)
         if assign_idx.all() == assignments.all():
             break
         else:
@@ -110,3 +111,51 @@ def kmeans_fast(features, k, num_iters=100):
         for kk in range(k):
             centers[kk] = center_sum[kk] / center_num[kk]
     return assignments
+
+
+if __name__ == '__main__':
+    plt.rcParams['figure.figsize'] = (15.0, 12.0)  # set default size of plots
+    plt.rcParams['image.interpolation'] = 'nearest'
+    plt.rcParams['image.cmap'] = 'gray'
+
+    # Generate random data points for clustering
+
+    # Set seed for consistency
+    np.random.seed(0)
+
+    # Cluster 1
+    mean1 = [-1, 0]
+    cov1 = [[0.1, 0], [0, 0.1]]
+    X1 = np.random.multivariate_normal(mean1, cov1, 100)
+
+    # Cluster 2
+    mean2 = [0, 1]
+    cov2 = [[0.1, 0], [0, 0.1]]
+    X2 = np.random.multivariate_normal(mean2, cov2, 100)
+
+    # Cluster 3
+    mean3 = [1, 0]
+    cov3 = [[0.1, 0], [0, 0.1]]
+    X3 = np.random.multivariate_normal(mean3, cov3, 100)
+
+    # Cluster 4
+    mean4 = [0, -1]
+    cov4 = [[0.1, 0], [0, 0.1]]
+    X4 = np.random.multivariate_normal(mean4, cov4, 100)
+
+    # Merge two sets of data points
+    X = np.concatenate((X1, X2, X3, X4))
+
+    np.random.seed(0)
+    start = time()
+    assignments = kmeans_fast(X, 4)
+    end = time()
+
+    kmeans_fast_runtime = end - start
+    print("kmeans running time: %f seconds." % kmeans_fast_runtime)
+    for i in range(4):
+        cluster_i = X[assignments == i]
+        plt.scatter(cluster_i[:, 0], cluster_i[:, 1])
+
+    plt.axis('equal')
+    plt.show()

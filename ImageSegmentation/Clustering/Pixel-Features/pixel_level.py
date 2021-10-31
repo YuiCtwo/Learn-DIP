@@ -1,5 +1,10 @@
-import numpy as np
 from skimage.util import img_as_float
+from matplotlib import rc
+from skimage import io
+from sklearn.cluster import KMeans
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Pixel-Level Features
@@ -18,7 +23,7 @@ def color_features(img):
 
     for h in range(H):
         for w in range(W):
-            features[h*W+w, :] = img[h, w]
+            features[h * W + w, :] = img[h, w]
 
     return features
 
@@ -45,6 +50,39 @@ def color_position_features(img):
     H, W, C = img.shape
     color = img_as_float(img)
     grid = np.mgrid[0:H:1, 0:W:1]
+    # 使用 transpose 变换维度
+    grid = grid.transpose(1, 2, 0)
     features = np.dstack((color, grid))
-    features = (features - np.mean(features)) / np.std(features)
+    features = features.reshape((H*W, C+2))
+    # features = (features - np.mean(features)) / np.std(features)
     return features
+
+
+if __name__ == '__main__':
+    # Load and display image
+    img = io.imread('train.jpg')
+    H, W, C = img.shape
+    plt.rcParams['figure.figsize'] = (15.0, 12.0)  # set default size of plots
+    plt.rcParams['image.interpolation'] = 'nearest'
+    plt.rcParams['image.cmap'] = 'gray'
+    np.random.seed(0)
+
+    features = color_features(img)
+    estimator = KMeans(n_clusters=8)
+    estimator.fit(features)
+    assignments = estimator.labels_
+    segments = assignments.reshape((H, W))
+
+    # Display segmentation
+    plt.subplot(121)
+    plt.imshow(segments, cmap='viridis')
+    plt.axis('off')
+    plt.subplot(122)
+    advanced_features = color_position_features(img)
+    estimator = KMeans(n_clusters=8)
+    estimator.fit(advanced_features)
+    assignments = estimator.labels_
+    segments = assignments.reshape((H, W))
+    plt.imshow(segments, cmap='viridis')
+    plt.axis('off')
+    plt.show()
