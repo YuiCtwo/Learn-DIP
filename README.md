@@ -36,10 +36,13 @@
     - 超像素法
 - 图像调整
   - Seam-Carving
+  - [Image-Pyramid](ImageResizing/ImagePyramid/image_pyramid.py)
+- 图像分类
+  - [KNN](ImageClassification/KNN/k_nearest_neighbor.py)
   
 ## 额外部分
 
-C++ 的代码整理了出来，姑且先放在这里一些，具体[C++ 环境](./env_CXX.md)
+C++ 的代码整理了出来，姑且先放在这里一些，具体环境参考[C++ 环境](./env_CXX.md)
 
 - [GMM](CXX/GMM/CXX)
 - [LSD](CXX/LSD)
