@@ -35,7 +35,7 @@ def ransac(keypoints1, keypoints2, matches, n_iters=200, threshold=20):
 
     Returns:
         H: a robust estimation of affine transformation from keypoints2 to
-        keypoints 1
+        key_points 1
     """
     # Copy matches array, to avoid overwriting it
     tmp_matches = matches.copy()

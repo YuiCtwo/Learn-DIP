@@ -15,7 +15,7 @@ plt.rcParams['image.cmap'] = 'gray'
 img1 = imread('uttower1.jpg', as_gray=True)
 img2 = imread('uttower2.jpg', as_gray=True)
 
-# Detect keypoints in both images
+# Detect key_points in both images
 hog_keypoints1 = corner_peaks(harris_corners(img1, window_size=3),
                               threshold_rel=0.05,
                               exclude_border=8)

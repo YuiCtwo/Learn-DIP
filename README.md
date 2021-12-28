@@ -36,9 +36,13 @@
     - 超像素法
 - 图像调整
   - Seam-Carving
-  - [Image-Pyramid](ImageResizing/ImagePyramid/image_pyramid.py)
+  - [图像金字塔](ImageResizing/ImagePyramid/image_pyramid.py)
 - 图像分类
   - [KNN](ImageClassification/KNN/k_nearest_neighbor.py)
+- 目标追踪
+  - Lucas-Kanade
+    - [Simple Lucas-Kanade Feature Tracker](ObjectTracking/LucasKanade/simple_lucas_kanade.py)
+    - [Pyramidal Lucas-Kanade Feature Tracker]()
   
 ## 额外部分
 

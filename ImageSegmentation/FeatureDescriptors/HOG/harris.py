@@ -106,7 +106,7 @@ def describe_keypoints(image, keypoints, desc_func, patch_size=16):
         patch_size: size of a square patch at each keypoint
 
     Returns:
-        desc: array of features describing the keypoints
+        desc: array of features describing the key_points
     """
 
     image.astype(np.float32)
@@ -135,8 +135,8 @@ def match_descriptors(desc1, desc2, threshold=0.5):
         The Scipy function cdist calculates Euclidean distance between all
         pairs of inputs
     Args:
-        desc1: an array of shape (M, P) holding descriptors of size P about M keypoints
-        desc2: an array of shape (N, P) holding descriptors of size P about N keypoints
+        desc1: an array of shape (M, P) holding descriptors of size P about M key_points
+        desc2: an array of shape (N, P) holding descriptors of size P about N key_points
 
     Returns:
         matches: an array of shape (Q, 2) where each row holds the indices of one pair
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     img1 = imread('uttower1.jpg', as_gray=True)
     img2 = imread('uttower2.jpg', as_gray=True)
 
-    # Detect keypoints in two images
+    # Detect key_points in two images
     keypoints1 = corner_peaks(harris_corners(img1, window_size=3),
                               threshold_rel=0.05,
                               exclude_border=8)
