@@ -32,11 +32,12 @@ def iterative_lucas_kanade(img1, img2, keypoints, window_size=9, num_iters=7, g=
     Ix2 = Ix ** 2
     Iy2 = Iy ** 2
     IxIy = np.multiply(Ix, Iy)
-    for y, x, gy, gx in np.hstack((keypoints, g)):
-        v = np.zeros(2)  # Initialize flow vector as zero vector
-        G00 = np.sum(Ix2[y-w:y+w][x-w:x+w])
-        G11 = np.sum(Iy2[y-w:y+w][x-w:x+w])
-        G01 = np.sum(IxIy[y-w:y+w][x-w:x+w])
+    for y, x, gx, gy in np.hstack((keypoints, g)):
+        yy, xx = int(round(y)), int(round(x))
+        v = np.zeros((2, 1))  # [vx, vy]^T
+        G00 = np.sum(Ix2[yy - w:yy + w + 1, xx - w:xx + w + 1])
+        G11 = np.sum(Iy2[yy - w:yy + w + 1, xx - w:xx + w + 1])
+        G01 = np.sum(IxIy[yy - w:yy + w + 1, xx - w:xx + w + 1])
         G = np.array([
             [G00, G01],
             [G01, G11]
@@ -44,36 +45,36 @@ def iterative_lucas_kanade(img1, img2, keypoints, window_size=9, num_iters=7, g=
 
         # Iteratively update flow vector
         for k in range(num_iters):
-            vx, vy = v
+            vx, vy = v[0][0], v[1][0]
             # Refined position of the point in the next frame
-            y2 = int(round(y + gy + vy))
-            x2 = int(round(x + gx + vx))
+            y2 = int(round(yy + gy + vy))
+            x2 = int(round(xx + gx + vx))
 
-            bk = np.zeros((1, 2))
-            for yi in range(y-w, y+w+1):
-                for xi in range(x-w, x+w+1):
-                    delta_Ik = img1[x, y] - img2[x2, y2]
-                    bk[0][0] += delta_Ik * Ix[x, y]
-                    bk[0][0] += delta_Ik * Iy[x, y]
+            bk = np.zeros((2, 1))
+            for yi in range(yy - w, yy + w + 1):
+                for xi in range(xx - w, xx + w + 1):
+                    delta_Ik = img1[yi, xi] - img2[y2, x2]
+                    bk[0][0] += (delta_Ik * Ix[yi, xi])
+                    bk[1][0] += (delta_Ik * Iy[yi, xi])
 
             vk = np.dot(np.linalg.inv(G), bk)
             # Update flow vector by vk
             v += vk
 
-        vx, vy = v
-        flow_vectors.append([vy, vx])
+        vx, vy = v[0][0], v[1][0]
+        flow_vectors.append([vx, vy])
 
     return np.array(flow_vectors)
 
 
 def pyramid_lucas_kanade(
-    img1, img2, keypoints, window_size=9, num_iters=7, level=2, scale=2
+        img1, img2, keypoints, window_size=9, num_iters=7, level=2, scale=2
 ):
     """Pyramidal Lucas Kanade method
     Args:
         img1 - same as lucas_kanade
         img2 - same as lucas_kanade
-        key_points - same as lucas_kanade
+        keypoints - same as lucas_kanade
         window_size - same as lucas_kanade
         num_iters - number of iterations to run iterative LK method
         level - Max level in image pyramid. Original image is at level 0 of
@@ -88,11 +89,11 @@ def pyramid_lucas_kanade(
     pyramid2 = tuple(pyramid_gaussian(img2, max_layer=level, downscale=scale))
 
     # Initialize pyramidal guess
-    g = np.zeros(keypoints.shape)
+    g = np.zeros(keypoints.shape)  # g: [gx, gy]^T
     d = np.zeros(keypoints.shape)
     for L in range(level, -1, -1):
         keypoints_L = keypoints / (scale ** L)
-        d = iterative_lucas_kanade(pyramid1[level-L], pyramid2[level-L],
+        d = iterative_lucas_kanade(pyramid1[L], pyramid2[L],
                                    keypoints_L, window_size, num_iters, g)
         g = scale * (g + d)
     d = g + d
@@ -123,14 +124,13 @@ def compute_error(patch1, patch2):
 
 
 def track_features(
-    frames,
-    keypoints,
-    error_thresh=1.5,
-    optflow_fn=pyramid_lucas_kanade,
-    exclude_border=5,
-    **kwargs
+        frames,
+        keypoints,
+        error_thresh=1.5,
+        optflow_fn=pyramid_lucas_kanade,
+        exclude_border=5,
+        **kwargs
 ):
-
     """Track key_points over multiple frames
 
     Args:
@@ -170,16 +170,16 @@ def track_features(
             xj = int(round(xj))
             # Point falls outside the image
             if (
-                yj > J.shape[0] - exclude_border - 1
-                or yj < exclude_border
-                or xj > J.shape[1] - exclude_border - 1
-                or xj < exclude_border
+                    yj > J.shape[0] - exclude_border - 1
+                    or yj < exclude_border
+                    or xj > J.shape[1] - exclude_border - 1
+                    or xj < exclude_border
             ):
                 continue
 
             # Compute error between patches in image I and J
-            patchI = I[yi - w : yi + w + 1, xi - w : xi + w + 1]
-            patchJ = J[yj - w : yj + w + 1, xj - w : xj + w + 1]
+            patchI = I[yi - w: yi + w + 1, xi - w: xi + w + 1]
+            patchJ = J[yj - w: yj + w + 1, xj - w: xj + w + 1]
             error = compute_error(patchI, patchJ)
             if error > error_thresh:
                 continue
@@ -205,9 +205,8 @@ def IoU(bbox1, bbox2):
     """
     x1, y1, w1, h1 = bbox1
     x2, y2, w2, h2 = bbox2
-    score = 0
-    xs = sorted([x1, x1+w1, x2, x2+w2])
-    ys = sorted([y1, y1+h1, y2, y2+h2])
+    xs = sorted([x1, x1 + w1, x2, x2 + w2])
+    ys = sorted([y1, y1 + h1, y2, y2 + h2])
     if xs[1] == x2 or xs[1] == x1:
         x_lens = xs[2] - xs[1]
         y_lens = ys[2] - ys[1]

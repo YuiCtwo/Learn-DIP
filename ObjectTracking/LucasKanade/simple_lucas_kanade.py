@@ -25,7 +25,6 @@ def lucas_kanade(img1, img2, keypoints, window_size=5):
     # Compute partial derivatives
     Iy, Ix = np.gradient(img1)
     It = img2 - img1
-
     # For each [y, x] in key_points, estimate flow vector [vy, vx]
     # using Lucas-Kanade method and append it to flow_vectors.
     for y, x in keypoints:
@@ -34,17 +33,19 @@ def lucas_kanade(img1, img2, keypoints, window_size=5):
         # In order to achieve more accurate results, image brightness at subpixel
         # locations can be computed using bilinear interpolation.
         y_coord, x_coord = int(round(y)), int(round(x))
-        A = np.zeros((window_size*window_size, 2))
-        b = np.zeros((window_size*window_size, 1))
+        A = np.zeros((window_size * window_size, 2))
+        b = np.zeros((window_size * window_size, 1))
         i = 0
-        for hi in range(y_coord-w, y_coord+w+1):
-            for wi in range(x_coord-w, x_coord+w+1):
-                i += 1
+        for hi in range(y_coord - w, y_coord + w + 1):
+            for wi in range(x_coord - w, x_coord + w + 1):
                 A[i][0] = Ix[hi][wi]
                 A[i][1] = Iy[hi][wi]
                 b[i][0] = -It[hi][wi]
-        v = np.dot(np.linalg.inv(A), b)
-        flow_vectors.append(v.tolist())
+                i += 1
+        # transform to square matrix for inv()
+        A_square = np.dot(A.T, A)
+        v = np.dot(np.linalg.inv(A_square), A.T).dot(b)
+        flow_vectors.append(v.T.tolist()[0])
     flow_vectors = np.array(flow_vectors)
 
-    return flow_vectors
+    return flow_vectors  # [[vx_1, vy_1], ...]
