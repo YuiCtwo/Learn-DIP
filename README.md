@@ -36,7 +36,8 @@
     - 超像素法
 - 图像调整
   - Seam-Carving
-  - [图像金字塔](ImageResizing/ImagePyramid/image_pyramid.py)
+  - [图像金字塔](ImageAdjusting/ImagePyramid/image_pyramid.py)
+  - [Metric rectification](ImageAdjusting/AffineRectification/metric_rectification.py)
 - 图像分类
   - [KNN](ImageClassification/KNN/k_nearest_neighbor.py)
 - 目标追踪
