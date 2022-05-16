@@ -33,7 +33,8 @@
   - 聚类法分割
     - [K-Means](ImageSegmentation/Clustering/K-Means/segmentation.py)
     - [像素特征(基于像素点的图片分割)](ImageSegmentation/Clustering/Pixel-Features)
-    - 超像素法
+  - 超像素法分割
+    - [简单线性迭代聚类(SLIC)](ImageSegmentation/SuperPixels/slic.py)
 - 图像调整
   - Seam-Carving
   - [图像金字塔](ImageAdjusting/ImagePyramid/image_pyramid.py)
