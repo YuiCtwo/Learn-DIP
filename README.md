@@ -1,10 +1,7 @@
 # Learn-DIP
 
-《数字图像处理第四版》书中等一些基础算法的实现，包括相关库的调用
-
-大三下选修了数字图像处理，书上讲的内容有很多，也有不少有意思的并且经典的算法，碍于学的时候的时间原因，没有整理实验课写的代码，我计划着大三暑假，大四整理整理并补充一些书本外的经典 DIP 用到的一些算法。
-
-- 记录一些书上算法的复现和一些平时用到的算法，如果有库尽量会使用库函数来更快捷的完成，毕竟重复的轮子尽量少造。
+- 记录一些《数字图像处理第四版》书中等一些基础算法的实现，包括相关库的调用。如果有库尽量会使用库函数来更快捷的完成，毕竟重复的轮子尽量少造。
+- 记录一些学习 3DV 时经典的计算机视觉算法，姑且也算图像处理
 
 ## 构成
 
@@ -36,15 +33,15 @@
   - 超像素法分割
     - [简单线性迭代聚类(SLIC)](ImageSegmentation/SuperPixels/slic.py)
 - 图像调整
-  - Seam-Carving
+  - [Seam-Carving](ImageAdjusting/SeamCarving/seam_carving_demo.py)
   - [图像金字塔](ImageAdjusting/ImagePyramid/image_pyramid.py)
   - [Metric rectification](ImageAdjusting/AffineRectification/metric_rectification.py)
 - 图像分类
   - [KNN](ImageClassification/KNN/k_nearest_neighbor.py)
 - 目标追踪
-  - Lucas-Kanade
-    - [Simple Lucas-Kanade Feature Tracker](ObjectTracking/LucasKanade/simple_lucas_kanade.py)
-    - [Pyramidal Lucas-Kanade Feature Tracker] WIP
+  - [Lucas-Kanade](ObjectTracking/LucasKanade/simple_lucas_kanade.py)
+- 相机标定 & 位姿优化
+  - [棋盘格标定]()
   
 ## 额外部分
 
